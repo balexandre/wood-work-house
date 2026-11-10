@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gable Renovation Plan</title>
+<style>
+:root{
+  --bg:#f5f4f0; --surface:#ffffff; --surface2:#f0eee9; --text:#1c1e21; --muted:#60656c; --line:#e1ded7;
+  --accent:#d9731a; --accent-soft:#fbe9d8; --ok:#2e7a4d; --ok-soft:#e1f1e7; --warn:#a86b12; --warn-soft:#fbf0d9;
+  --bad:#b23a3a; --bad-soft:#f8e1e1; --sky:#dbe7f1;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131416; --surface:#1c1e21; --surface2:#24272b; --text:#ebeae6; --muted:#a2a6ac; --line:#30343a;
+    --accent:#f08a33; --accent-soft:#3a2615; --ok:#5fbf88; --ok-soft:#173022; --warn:#e0a94b; --warn-soft:#3a2d12;
+    --bad:#e46d6d; --bad-soft:#3a1a1a; --sky:#1a2330;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131416; --surface:#1c1e21; --surface2:#24272b; --text:#ebeae6; --muted:#a2a6ac; --line:#30343a;
+  --accent:#f08a33; --accent-soft:#3a2615; --ok:#5fbf88; --ok-soft:#173022; --warn:#e0a94b; --warn-soft:#3a2d12;
+  --bad:#e46d6d; --bad-soft:#3a1a1a; --sky:#1a2330;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:28px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
+h2{font-size:20px;margin:0 0 4px;letter-spacing:-.005em}
+.lede{color:var(--muted);margin:0 0 16px;max-width:760px}
+.sub{color:var(--muted);margin:0}
+section{margin-top:40px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--surface2);color:var(--text);border:1px solid var(--line)}
+.chip.warn{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.chip.bad{background:var(--bad-soft);border-color:transparent;color:var(--bad)}
+.head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:flex-end}
+.total{text-align:right}
+.total .big{font-size:30px;font-weight:650;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.total .small{color:var(--muted);font-size:13px}
+
+/* viewer */
+.viewer{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:0;overflow:hidden;margin-top:18px}
+.stage{position:relative;min-height:440px;background:var(--sky);border-right:1px solid var(--line)}
+#scene{display:block;width:100%;height:100%;min-height:440px;cursor:grab;touch-action:none}
+#scene:active{cursor:grabbing}
+.toolbar{position:absolute;left:12px;top:12px;right:12px;display:flex;flex-wrap:wrap;gap:8px;pointer-events:none}
+.toolbar>*{pointer-events:auto}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.seg button{border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;padding:5px 10px;border-radius:7px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--text);color:var(--surface)}
+.hint{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--muted);background:color-mix(in srgb,var(--surface) 80%,transparent);padding:3px 8px;border-radius:6px}
+.side{padding:14px;display:flex;flex-direction:column;gap:12px;max-height:620px;overflow:auto}
+.side h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:2px 0 0}
+.comp{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
+.comp:hover{border-color:var(--muted)}
+.comp[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.sw{width:14px;height:14px;border-radius:4px;flex:none;border:1px solid rgba(127,127,127,.4)}
+.comp .nm{font-size:14px;line-height:1.25}
+.comp .dk{font-size:12px;color:var(--muted)}
+.comp .pr{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.comp.context .nm{color:var(--muted)}
+.info{background:var(--surface2);border-radius:10px;padding:12px;font-size:14px}
+.info h4{margin:0 0 2px;font-size:16px}
+.info .dk{color:var(--muted);font-size:13px;margin-bottom:8px}
+.info dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px}
+.info dt{color:var(--muted);font-size:13px}
+.info dd{margin:0}
+.info .note{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.info .note p{margin:0 0 6px}
+
+/* tables */
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tbl th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;background:var(--surface2)}
+.tbl td.num,.tbl th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tfoot td{font-weight:650;border-top:2px solid var(--line)}
+.tbl .muted{color:var(--muted);font-size:13px}
+.scroll{overflow-x:auto}
+.verdict{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.v-ok{background:var(--ok-soft);color:var(--ok)}
+.v-warn{background:var(--warn-soft);color:var(--warn)}
+.v-bad{background:var(--bad-soft);color:var(--bad)}
+
+/* assumptions */
+.assume{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:14px;border-bottom:1px solid var(--line)}
+.assume label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.assume output{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+.assume input{width:100%;accent-color:var(--accent)}
+.facts{padding:12px 14px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--line)}
+
+/* timeline */
+.timeline{display:flex;height:46px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.timeline div{display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;text-align:center;padding:0 4px;line-height:1.2;border-right:1px solid rgba(255,255,255,.35)}
+.timeline div:last-child{border-right:0}
+.tl-legend{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:6px}
+
+/* questions */
+ol.q{margin:0;padding:0;list-style:none;counter-reset:q}
+ol.q li{counter-increment:q;position:relative;padding:14px 16px 14px 52px;border-bottom:1px solid var(--line)}
+ol.q li:last-child{border-bottom:0}
+ol.q li::before{content:counter(q);position:absolute;left:16px;top:14px;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+ol.q b{display:block}
+ol.q .da{color:var(--muted);font-size:13px;font-style:italic;margin-top:4px}
+
+/* photos */
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.photos figure{margin:0;cursor:zoom-in}
+.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block;background:var(--surface2)}
+.photos figcaption{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.4}
+dialog{border:0;padding:0;background:transparent;max-width:min(96vw,1200px)}
+dialog::backdrop{background:rgba(0,0,0,.8)}
+dialog img{max-width:100%;max-height:82vh;display:block;border-radius:10px}
+dialog p{color:#eee;margin:8px 0 0;font-size:14px}
+footer{margin-top:40px;color:var(--muted);font-size:13px}
+
+@media (max-width:860px){
+  .viewer{grid-template-columns:1fr}
+  .stage{border-right:0;border-bottom:1px solid var(--line);min-height:360px}
+  #scene{min-height:360px}
+  .side{max-height:none}
+  .assume{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .total{text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <div>
+      <h1>Gables, fascia &amp; gutters</h1>
+      <p class="sub">Lille Skensved · quote 2 (Plastmo gutters, you remove the old materials yourself)</p>
+    </div>
+    <div class="total">
+      <div class="big">88,674 kr.</div>
+      <div class="small">materials 55,874 + labour 32,800 · 12 working days</div>
+    </div>
+  </header>
+  <div class="chips">
+    <span class="chip bad">VAT (moms) not stated</span>
+    <span class="chip warn">Scaffolding not mentioned in writing</span>
+    <span class="chip warn">You haul away the old materials</span>
+    <span class="chip">Measurements from the floor plan; roof shape estimated from photos</span>
+  </div>
+
+  <section style="margin-top:22px">
+    <h2>The house in 3D</h2>
+    <p class="lede">Drag to rotate, scroll or pinch to zoom. Click a part, or pick one from the list, to see what the quote says about it. Switch between <b>Today</b> and <b>After the work</b> to compare.</p>
+    <div class="viewer card">
+      <div class="stage" id="stage">
+        <canvas id="scene" aria-label="3D model of the house"></canvas>
+        <div class="toolbar">
+          <div class="seg" role="group" aria-label="Look">
+            <button data-mode="today" aria-pressed="false">Today</button>
+            <button data-mode="after" aria-pressed="true">After the work</button>
+          </div>
+          <div class="seg" role="group" aria-label="Camera">
+            <button data-view="overview">Overview</button>
+            <button data-view="entrance">Entrance</button>
+            <button data-view="garden">Garden</button>
+            <button data-view="east">East gable</button>
+            <button data-view="west">West gable</button>
+            <button data-view="top">Above</button>
+          </div>
+        </div>
+        <div class="hint">Plan top ≈ north (entrance side)</div>
+      </div>
+      <aside class="side">
+        <div class="info" id="info"></div>
+        <h3>In the quote</h3>
+        <div id="complist" style="display:flex;flex-direction:column;gap:6px"></div>
+        <h3>Not in the quote</h3>
+        <div id="ctxlist" style="display:flex;flex-direction:column;gap:6px"></div>
+      </aside>
+    </div>
+  </section>
+
+  <section>
+    <h2>Does the quote match the house?</h2>
+    <p class="lede">These are my estimates from the floor plan and photos, set against the quote. The roof pitch and overhang depths are guesses from the photos. If you measure them, set the sliders and everything updates, including the 3D model.</p>
+    <div class="card">
+      <div class="facts">From the plan: main wing <b>16.3 × 7.9 m</b>. Living-room wing <b>5.8 m</b> wide, sticking out <b>3.5 m</b> to the south. Covered terrace <b>2.0 × 3.5 m</b> east of the living room. Three gables: west, east and south.</div>
+      <div class="assume">
+        <label>Roof pitch <output id="o-pitch"></output><input type="range" id="i-pitch" min="20" max="40" step="1"></label>
+        <label>Overhang at the eaves <output id="o-eo"></output><input type="range" id="i-eo" min="0.3" max="1.0" step="0.05"></label>
+        <label>Overhang at the gables <output id="o-go"></output><input type="range" id="i-go" min="0.3" max="1.0" step="0.05"></label>
+        <label>Fascia height (boards stacked) <output id="o-rows"></output><input type="range" id="i-rows" min="1" max="4" step="1"></label>
+      </div>
+      <div class="scroll">
+        <table class="tbl" id="check">
+          <thead><tr><th>Item</th><th class="num">Estimate for your house</th><th class="num">In the quote</th><th>Verdict</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Materials and prices</h2>
+    <p class="lede">As listed in quote 2. Labour per task is my split of the 32,800 kr. by days; the quote gives only the total.</p>
+    <div class="card scroll">
+      <table class="tbl">
+        <thead><tr><th>Part</th><th>Material</th><th>Quantity</th><th class="num">Materials</th><th class="num">Labour (est.)</th></tr></thead>
+        <tbody>
+          <tr><td><b>Overhang / soffit</b><div class="muted">Udhæng</div></td><td>Black-painted spruce 19 × 100 mm (16 × 95 mm finished)</td><td>110 × 5.1 m for about 75 m of overhang<br>20 × 4.2 m for the terrace ceiling (2 × 3.5 m)</td><td class="num">18,709 kr.</td><td class="num">10,933 kr.<div class="muted">4 days</div></td></tr>
+          <tr><td><b>Gable cladding</b><div class="muted">Gavlbeklædning</div></td><td>HardiePlank fibre cement, wood texture, black, 8 × 180 × 3600 mm</td><td>70 boards (about 63 + 7 for waste)</td><td class="num">7,350 kr.</td><td class="num">8,200 kr.<div class="muted">3 days</div></td></tr>
+          <tr><td><b>Fascia &amp; barge boards</b><div class="muted">Sternbrædder</div></td><td>Black-painted spruce, tongue &amp; groove, 25 × 125 mm (22 × 120 mm), 4.8 m</td><td>55 boards for about 75 m</td><td class="num">11,110 kr.</td><td class="num">5,467 kr.<div class="muted">2 days</div></td></tr>
+          <tr><td><b>Gutters &amp; downpipes</b><div class="muted">Tagrender og nedløb</div></td><td>Plastmo no. 12, black steel</td><td>36.9 m gutter, 66 brackets, 6 end caps, 3 joiners, 3 outlets 75 mm, 3 downpipes × 3 m, various bends</td><td class="num">18,705 kr.</td><td class="num">2,733 kr.<div class="muted">1 day</div></td></tr>
+          <tr><td><b>Tear-out</b><div class="muted">Nedrivning</div></td><td>Old materials piled on your property. You arrange removal (3,200 kr. deducted).</td><td>—</td><td class="num">—</td><td class="num">5,467 kr.<div class="muted">2 days</div></td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="3">Total</td><td class="num">55,874 kr.</td><td class="num">32,800 kr.</td></tr></tfoot>
+      </table>
+    </div>
+    <p class="sub" style="margin-top:10px;font-size:13px">Quote 1 had Rheinzink zinc gutters for <b>16,602 kr.</b>, 2,103 kr. less than the steel ones, which is unusual since zinc normally costs more. Everything else is the same in both quotes.</p>
+  </section>
+
+  <section>
+    <h2>Work plan</h2>
+    <p class="lede">12 working days, 96 hours, in the order the quote lists them.</p>
+    <div class="timeline" id="timeline"></div>
+    <div class="tl-legend"><span>Day 1</span><span>Day 12</span></div>
+  </section>
+
+  <section>
+    <h2>Questions to ask before you sign</h2>
+    <p class="lede">The Danish line under each one is ready to paste into your reply.</p>
+    <div class="card">
+      <ol class="q">
+        <li><b>Is VAT included?</b> If not, the total is 110,843 kr.<div class="da">Er priserne inkl. moms?</div></li>
+        <li><b>Scaffolding in writing.</b> You were told it's free, but the quote doesn't mention it.<div class="da">Vil I skrive ind i tilbuddet, at stillads/lift er inkluderet i prisen?</div></li>
+        <li><b>75 m of overhang and fascia.</b> I estimate about 62–65 m from the plan. What else is included?<div class="da">Hvad er med i de ca. 75 løbende meter udhæng og stern?</div></li>
+        <li><b>Horizontal boards on the gables.</b> HardiePlank goes on horizontally, so the look changes from today's vertical boards.<div class="da">Monteres HardiePlank vandret på gavlene?</div></li>
+        <li><b>The dark band above the brickwork.</b> It isn't mentioned. Is it replaced or left as it is?<div class="da">Udskiftes det mørke bræt/den mørke beklædning over murværket, eller bliver det siddende?</div></li>
+        <li><b>Where the new gutters sit.</b> Today they're hidden behind a tall fascia. With brackets they normally hang in front of it, where you can see them.<div class="da">Bliver de nye tagrender hængt synligt foran sternen, eller skjult bag den som i dag?</div></li>
+        <li><b>Missing gutter parts.</b> No inner corners for the two inner corners, no downpipe clips, and only 3 joiners for about 37 m of gutter.<div class="da">Er indvendige hjørner, rørholdere og nok samlestykker med i prisen?</div></li>
+        <li><b>How many downpipes?</b> Two black pipes run up the east gable into the soffit. If one is a downpipe, the house has 4 and the quote lists 3.<div class="da">Er der regnet med alle nedløb – også ved østgavlen?</div></li>
+        <li><b>Asbestos.</b> The old gable boards and the roof sheets may be fibre cement. If they are from before 1987 they can contain asbestos and must be handled and disposed of by the rules.<div class="da">Er de gamle gavlplader og tagpladerne asbestfri? Hvordan håndteres det?</div></li>
+        <li><b>Hidden damage and terms.</b> The hourly rate if rot turns up, the payment plan, the start date, and whether AB-Forbruger applies.<div class="da">Hvad er timeprisen for ekstraarbejde ved råd? Arbejdes der efter AB-Forbruger?</div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2>Photos</h2>
+    <p class="lede">What each photo shows that matters for the job. Click to enlarge.</p>
+    <div class="photos" id="photos"></div>
+  </section>
+
+  <footer>Prepared 10 November 2026 from quote 2, the floor plan and 9 photos. The model is to scale for the footprint. Roof pitch, overhangs, window positions and downpipe positions are approximate.</footer>
+</div>
+
+<dialog id="lightbox"><img alt=""><p></p></dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const PHOTOS = [
+  {
+    "src": "photos/IMG_2493.jpg",
+    "title": "Garden side, from the south-east.",
+    "caption": "The south gable (left) roof also covers the terrace, held up by a post. The east gable is on the right, with a valley between them.",
+    "alt": "Garden side, from the south-east."
+  },
+  {
+    "src": "photos/IMG_2494.jpg",
+    "title": "South gable over the living room.",
+    "caption": "The roof is wider than the living room and carries on to the right over the covered terrace.",
+    "alt": "South gable over the living room."
+  },
+  {
+    "src": "photos/IMG_2495.jpg",
+    "title": "Bedroom wing, from the south-west.",
+    "caption": "A downpipe at the west corner, and the inner corner where the two roofs meet.",
+    "alt": "Bedroom wing, from the south-west."
+  },
+  {
+    "src": "photos/IMG_2488.jpg",
+    "title": "East gable.",
+    "caption": "Three windows, the heat pump, and the terrace roof on the left. Note the dark band above the brickwork and the two black pipes.",
+    "alt": "East gable."
+  },
+  {
+    "src": "photos/IMG_2491.jpg",
+    "title": "West gable.",
+    "caption": "Today's cladding is vertical boards. The doubled barge boards are peeling.",
+    "alt": "West gable."
+  },
+  {
+    "src": "photos/IMG_2492.jpg",
+    "title": "Corner on the entrance side.",
+    "caption": "Deep sloping soffit, tall fascia and a white downpipe with a gooseneck.",
+    "alt": "Corner on the entrance side."
+  },
+  {
+    "src": "photos/IMG_2497.jpg",
+    "title": "Roof edge.",
+    "caption": "The gutter is hidden behind a tall fascia. The roof sheets look like fibre cement.",
+    "alt": "Roof edge."
+  },
+  {
+    "src": "photos/IMG_2498.jpg",
+    "title": "Soffit from below.",
+    "caption": "Flaking paint and a damaged spot in the boards.",
+    "alt": "Soffit from below."
+  },
+  {
+    "src": "photos/IMG_2496.jpg",
+    "title": "Covered terrace.",
+    "caption": "Flat white board ceiling (the 2 × 3.5 m in the quote) and the post.",
+    "alt": "Covered terrace."
+  }
+];
+
+/* ---------- data ---------- */
+const P = {L:16.34, D:7.92, sx0:6.59, sx1:12.43, sz1:11.39, tW:2.0, wallH:2.6, brickH:2.35, t:0.3};
+const S = {pitch:30, eo:0.7, go:0.6, rows:3, mode:'after', sel:null};
+const fmt = n => n.toLocaleString('en-US').replace(/,/g, ',') + ' kr.';
+const DAY = 32800/12;
+
+const COMP = {
+  gables:{name:'Gable cladding', dk:'Gavlbeklædning', price:'7,350 kr.', mat:'HardiePlank fibre cement, wood texture, black, 8 × 180 × 3600 mm',
+    qty:'70 boards (about 63 + 7 for waste)', labour:'3 days · about 8,200 kr.', today:'Vertical white boards, weathered and mouldy.',
+    notes:['HardiePlank is fitted horizontally with overlapping boards, so the gables will show horizontal lines instead of today\'s vertical boards.','The old boards may be fibre cement. If they are from before 1987, they could contain asbestos.']},
+  soffit:{name:'Overhang / soffit', dk:'Udhæng', price:'18,709 kr.', mat:'Black-painted spruce 19 × 100 mm (16 × 95 mm finished)',
+    qty:'110 boards × 5.1 m for about 75 m of overhang', labour:'4 days · about 10,933 kr.', today:'White painted boards, flaking, with at least one damaged spot.',
+    notes:['The price includes the terrace ceiling.','The underside of every overhang turns from white to black.']},
+  terrace:{name:'Terrace ceiling', dk:'Terrasseudhæng', price:'in the overhang price', mat:'Same black spruce boards',
+    qty:'20 boards × 4.2 m for 2 × 3.5 m', labour:'part of the 4 overhang days', today:'Flat white board ceiling over the covered terrace.',
+    notes:['The 2 × 3.5 m in the quote matches the plan: 2.0 m out from the living-room wall, 3.5 m along it.']},
+  fascia:{name:'Fascia & barge boards', dk:'Sternbrædder', price:'11,110 kr.', mat:'Black-painted spruce, tongue & groove, 25 × 125 mm (22 × 120 mm), 4.8 m',
+    qty:'55 boards for about 75 m', labour:'2 days · about 5,467 kr.', today:'Tall black fascia with the gutter hidden behind it. Barge boards on the gables are doubled and peeling.',
+    notes:['264 m of board for 75 m of edge means about 3 boards stacked (≈36 cm). That matches today\'s tall fascia, so the quantity makes sense.']},
+  gutters:{name:'Gutters', dk:'Tagrender', price:'18,705 kr. incl. downpipes', mat:'Plastmo no. 12, black steel',
+    qty:'36.9 m, 66 brackets, 6 end caps, 3 joiners', labour:'1 day · about 2,733 kr.', today:'Hidden behind the tall fascia.',
+    notes:['6 end caps means 3 separate runs. Two of them turn an inner corner, but no corner pieces are listed.','Brackets (konsoljern) normally hang the gutter in front of the fascia, so the new gutters will probably be visible. The model assumes that.']},
+  downpipes:{name:'Downpipes', dk:'Nedløb', price:'in the gutter price', mat:'Plastmo black steel',
+    qty:'3 × 3 m, 3 outlets 75 mm, various bends', labour:'part of the gutter day', today:'White pipes. Positions in the model are approximate.',
+    notes:['No downpipe clips (rørholdere) are listed.','Two black pipes run up the east gable. If one is a downpipe, the house has 4.']},
+  band:{name:'Dark band above brickwork', dk:'Not in the quote', price:'—', mat:'Existing dark boards between the brickwork and the roof',
+    qty:'—', labour:'—', today:'Dark boards, horizontal under the gables, vertical along the eaves.',
+    notes:['The quote doesn\'t say whether this is replaced. Ask, because it sits right where the new gables and soffit meet the wall.'], context:true},
+  roof:{name:'Roof', dk:'Not part of this job', price:'—', mat:'Looks like corrugated fibre-cement sheets made to look like tiles',
+    qty:'—', labour:'—', today:'Dark sheets, mossy at the edges.',
+    notes:['If the sheets are from before 1987 they may contain asbestos. They should not be cut or ground while the new fascia and gutters go on.'], context:true}
+};
+const ORDER = ['gables','soffit','terrace','fascia','gutters','downpipes'];
+const CTX = ['band','roof'];
+
+const LOOK = {
+  today:{soffit:0xdcd8cf, terrace:0xe4e1d9, fascia:0x2c2f34, gutters:0xb4b8bd, downpipes:0xeeeeee, band:0x2a2c30, roof:0x3a3d41},
+  after:{soffit:0x25262a, terrace:0x25262a, fascia:0x1c1d20, gutters:0x1f2023, downpipes:0x1f2023, band:0x2a2c30, roof:0x3a3d41}
+};
+
+/* ---------- geometry maths ---------- */
+function derive(){
+  const r = S.pitch*Math.PI/180, tan = Math.tan(r), cos = Math.cos(r);
+  const eo = S.eo, go = S.go;
+  const tEave = P.sx1 + P.tW;              // terrace roof edge (x)
+  const c1s = tEave - eo;                  // south wing: virtual east wall
+  const sHalf = (c1s - P.sx0)/2, sC = (c1s + P.sx0)/2;
+  const mHalf = P.D/2;
+  const yE = P.wallH + P.t - eo*tan;       // top of roof at the eave
+  const xc = tEave - 0.3;                  // end of flat terrace ceiling
+  const ceilY = xc > c1s ? P.wallH - (xc - c1s)*tan : P.wallH;
+  const eaves = {
+    north: P.L + 2*go,
+    sw: (P.sx0 - eo) + go,
+    se: (P.L + go) - tEave,
+    sww: (P.sz1 + go) - (P.D + eo),
+    swe: (P.sz1 + go) - (P.D + eo)
+  };
+  const eaveTotal = Object.values(eaves).reduce((a,b)=>a+b,0);
+  const rakeMain = (mHalf + eo)/cos, rakeS = (sHalf + eo)/cos;
+  const rakeTotal = 4*rakeMain + 2*rakeS;
+  const gMain = P.D * (mHalf*tan) / 2;
+  const gSouth = (c1s - P.sx0) * (sHalf*tan) / 2;
+  const gableArea = 2*gMain + gSouth;
+  const bandArea = (P.wallH - P.brickH) * (2*P.D + (c1s - P.sx0));
+  return {tan, cos, eo, go, tEave, c1s, sHalf, sC, mHalf, yE, xc, ceilY, eaves, eaveTotal, rakeMain, rakeS, rakeTotal, gableArea, bandArea};
+}
+
+/* ---------- three.js scene ---------- */
+const T = THREE;
+const canvas = document.getElementById('scene');
+const stage = document.getElementById('stage');
+const renderer = new T.WebGLRenderer({canvas, antialias:true, preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = T.PCFSoftShadowMap;
+const scene = new T.Scene();
+const camera = new T.PerspectiveCamera(38, 1, 0.1, 300);
+const controls = new T.OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.maxPolarAngle = Math.PI/2 - 0.04;
+controls.minDistance = 6; controls.maxDistance = 70;
+const CENTER = new T.Vector3(8.4, 1.8, 6.2);
+controls.target.copy(CENTER);
+
+scene.add(new T.HemisphereLight(0xffffff, 0x7d8a6a, 0.72));
+const sun = new T.DirectionalLight(0xffffff, 0.75);
+sun.position.set(-6, 22, 20); sun.target.position.copy(CENTER);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, {left:-22, right:22, top:22, bottom:-22, near:1, far:80});
+sun.shadow.bias = -0.0006;
+scene.add(sun, sun.target);
+const fill = new T.DirectionalLight(0xffffff, 0.25); fill.position.set(20, 10, -15); scene.add(fill);
+
+function stripeTex(bg, line, vertical){
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const g = c.getContext('2d'); g.fillStyle = bg; g.fillRect(0,0,256,256);
+  g.strokeStyle = line; g.lineWidth = 3;
+  for (let p = 0; p < 256; p += 64){
+    g.beginPath();
+    if (vertical){ g.moveTo(p+1.5,0); g.lineTo(p+1.5,256); } else { g.moveTo(0,p+1.5); g.lineTo(256,p+1.5); }
+    g.stroke();
+  }
+  const t = new T.CanvasTexture(c); t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 4; return t;
+}
+const TEX = {
+  today: (()=>{ const t = stripeTex('#ecebe6', '#b9b7b0', true); t.repeat.set(1/0.48, 1/0.48); return t; })(),
+  after: (()=>{ const t = stripeTex('#2a2c30', '#45484e', false); t.repeat.set(1/0.6, 1/0.6); return t; })()
+};
+
+const lam = (c, o={}) => new T.MeshLambertMaterial(Object.assign({color:c}, o));
+const M = {
+  brick: lam(0xebe8e1), window: lam(0x3a3f47), post: lam(0x6e604f), chimney: lam(0xe4e1da),
+  ground: lam(0x6c8c52), paving: lam(0xa8a398),
+  roof: lam(0x3a3d41, {side:T.DoubleSide}), soffit: lam(0xdcd8cf, {side:T.DoubleSide}),
+  terrace: lam(0xe4e1d9, {side:T.DoubleSide}), fascia: lam(0x2c2f34, {side:T.DoubleSide}),
+  gables: lam(0xffffff, {side:T.DoubleSide, map:TEX.after}), gutters: lam(0x1f2023), downpipes: lam(0x1f2023),
+  band: lam(0x2a2c30)
+};
+const KEYED = ['roof','soffit','terrace','fascia','gables','gutters','downpipes','band'];
+
+const ground = new T.Mesh(new T.PlaneGeometry(90, 90), M.ground);
+ground.rotation.x = -Math.PI/2; ground.position.set(CENTER.x, 0, CENTER.z); ground.receiveShadow = true; scene.add(ground);
+const pave = new T.Mesh(new T.PlaneGeometry(7.5, 6.2), M.paving);
+pave.rotation.x = -Math.PI/2; pave.position.set(14.2, 0.01, 10.6); pave.receiveShadow = true; scene.add(pave);
+
+let house = new T.Group(); scene.add(house);
+
+function mesh(geo, mat, key){
+  const m = new T.Mesh(geo, mat); m.castShadow = true; m.receiveShadow = true;
+  if (key) m.userData.key = key; house.add(m); return m;
+}
+function box(x0,x1,y0,y1,z0,z1,mat,key){
+  const m = mesh(new T.BoxGeometry(x1-x0, y1-y0, z1-z0), mat, key);
+  m.position.set((x0+x1)/2, (y0+y1)/2, (z0+z1)/2); return m;
+}
+function pipe(a, b, r, mat, key){
+  const d = new T.Vector3().subVectors(b, a), len = d.length();
+  const m = mesh(new T.CylinderGeometry(r, r, len, 14), mat, key);
+  m.position.copy(a).addScaledVector(d, 0.5);
+  m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0), d.clone().normalize());
+  return m;
+}
+
+/* Gable roof slab. axis 'x' = ridge runs along x. c0,c1 = wall lines across the ridge.
+   Groups: 0 roof top, 1 soffit underside, 2 fascia (eave edges), 3 barge ends. */
+function roofSlab(axis, c0, c1, v0, v1, d){
+  const half = (c1-c0)/2, cc = (c0+c1)/2, W = half + d.eo, t = P.t;
+  const yE = P.wallH + t - d.eo*d.tan, yR = P.wallH + t + half*d.tan;
+  const A0=[-W,yE], R=[0,yR], A1=[W,yE], B0=[-W,yE-t], RB=[0,yR-t], B1=[W,yE-t];
+  const P3 = (p, v) => axis === 'x' ? [v, p[1], cc + p[0]] : [cc + p[0], p[1], v];
+  const pos = [];
+  const quad = (a,b,c,e) => pos.push(...a,...b,...c, ...a,...c,...e);
+  const along = (p,q) => quad(P3(p,v0), P3(q,v0), P3(q,v1), P3(p,v1));
+  const geo = new T.BufferGeometry();
+  along(A0,R); along(R,A1);               // top
+  along(B0,RB); along(RB,B1);             // underside
+  along(A0,B0); along(A1,B1);             // eave edges
+  for (const v of [v0, v1]){ quad(P3(A0,v),P3(R,v),P3(RB,v),P3(B0,v)); quad(P3(R,v),P3(A1,v),P3(B1,v),P3(RB,v)); }
+  geo.setAttribute('position', new T.Float32BufferAttribute(pos, 3));
+  geo.addGroup(0,12,0); geo.addGroup(12,12,1); geo.addGroup(24,12,2); geo.addGroup(36,24,3);
+  geo.computeVertexNormals();
+  const m = mesh(geo, [M.roof, M.soffit, M.fascia, M.fascia]);
+  m.userData.keys = ['roof','soffit','fascia','fascia'];
+  return m;
+}
+
+function gable(points, place){
+  const sh = new T.Shape(); points.forEach((p,i)=> i ? sh.lineTo(p[0],p[1]) : sh.moveTo(p[0],p[1]));
+  const m = mesh(new T.ShapeGeometry(sh), M.gables, 'gables');
+  place(m); return m;
+}
+
+const WIN = [
+  // [wall, from, to, y0, y1]
+  ['N',1.09,2.37,0.9,2.1],['N',3.97,4.53,1.3,2.1],['N',5.05,5.37,0.4,2.1],['N',5.43,6.29,0,2.1],['N',6.34,6.69,0.4,2.1],
+  ['N',7.77,9.09,1.1,2.1],['N',10.4,11.75,1.1,2.1],['N',12.97,13.9,0,2.1],
+  ['S',1.17,2.49,0.9,2.1],['S',4.29,5.63,0.9,2.1],
+  ['E',0.69,2.06,1.1,2.1],['E',2.82,4.25,1.3,2.1],['E',5.49,6.86,0.9,2.1],
+  ['SS',7.71,11.28,0.1,2.2],['SE',8.06,8.91,0,2.1],['SE',9.03,10.0,0.5,2.1]
+];
+
+function build(){
+  scene.remove(house);
+  house.traverse(o => { if (o.geometry) o.geometry.dispose(); });
+  house = new T.Group(); scene.add(house);
+  const d = derive();
+
+  // walls + dark band
+  box(0, P.L, 0, P.brickH, 0, P.D, M.brick);
+  box(P.sx0, P.sx1, 0, P.brickH, P.D-0.05, P.sz1, M.brick);
+  box(-0.01, P.L+0.01, P.brickH, P.wallH, -0.01, P.D+0.01, M.band, 'band');
+  box(P.sx0-0.01, P.sx1+0.01, P.brickH, P.wallH, P.D, P.sz1+0.01, M.band, 'band');
+
+  // windows & doors
+  const e = 0.03;
+  for (const [w,a,b,y0,y1] of WIN){
+    if (w==='N')  box(a,b,y0,y1,-e,e,M.window);
+    if (w==='S')  box(a,b,y0,y1,P.D-e,P.D+e,M.window);
+    if (w==='E')  box(P.L-e,P.L+e,y0,y1,a,b,M.window);
+    if (w==='SS') box(a,b,y0,y1,P.sz1-e,P.sz1+e,M.window);
+    if (w==='SE') box(P.sx1-e,P.sx1+e,y0,y1,a,b,M.window);
+  }
+
+  // roofs
+  roofSlab('x', 0, P.D, -d.go, P.L + d.go, d);
+  roofSlab('z', P.sx0, d.c1s, P.D/2, P.sz1 + d.go, d);
+
+  // gables (cladding sits in the wall plane, under the roof)
+  const mApex = P.wallH + d.mHalf*d.tan;
+  const mainPts = [[0,P.wallH],[P.D,P.wallH],[P.D/2,mApex]];
+  gable(mainPts, m => { m.rotation.y = -Math.PI/2; m.position.x = -0.02; });
+  gable(mainPts, m => { m.rotation.y = -Math.PI/2; m.position.x = P.L + 0.02; });
+  const sApex = P.wallH + d.sHalf*d.tan;
+  const southPts = d.xc > d.c1s
+    ? [[P.sx0,P.wallH],[P.sx1,P.wallH],[P.sx1,d.ceilY],[d.xc,d.ceilY],[d.sC,sApex]]
+    : [[P.sx0,P.wallH],[d.c1s,P.wallH],[d.sC,sApex]];
+  gable(southPts, m => { m.position.z = P.sz1 + 0.02; });
+
+  // terrace ceiling + post
+  box(P.sx1, d.xc, d.ceilY - 0.03, d.ceilY, P.D, P.sz1, M.terrace, 'terrace');
+  box(d.xc - 0.22, d.xc - 0.1, 0, d.ceilY - 0.03, P.sz1 - 0.2, P.sz1 - 0.08, M.post);
+
+  // chimney
+  box(6.8, 7.4, 2.0, P.wallH + P.t + d.sHalf*d.tan - 0.2, 8.9, 9.5, M.chimney);
+
+  // gutters
+  const after = S.mode === 'after';
+  const gy = after ? d.yE - 0.08 : d.yE - 0.03;  // today: hidden behind the tall fascia
+  const off = after ? 0.075 : -0.12;
+  const runs = [
+    ['x', -d.eo, -d.go, P.L + d.go, -1],
+    ['x', P.D + d.eo, -d.go, P.sx0 - d.eo, 1],
+    ['x', P.D + d.eo, d.tEave, P.L + d.go, 1],
+    ['z', P.sx0 - d.eo, P.D + d.eo, P.sz1 + d.go, -1],
+    ['z', d.tEave, P.D + d.eo, P.sz1 + d.go, 1]
+  ];
+  for (const [ax, line, a, b, s] of runs){
+    const c = line + s*off;
+    if (ax === 'x') box(a, b, gy-0.055, gy+0.055, c-0.065, c+0.065, M.gutters, 'gutters');
+    else box(c-0.065, c+0.065, gy-0.055, gy+0.055, a, b, M.gutters, 'gutters');
+  }
+
+  // downpipes: [x, wall z, outward sign]
+  const r = 0.045;
+  for (const [x, wz, s] of [[0.5, 0, -1], [0.5, P.D, 1], [15.4, P.D, 1]]){
+    const gz = (s < 0 ? -d.eo : P.D + d.eo) + s*off;
+    const wallZ = wz + s*0.07;
+    const top = new T.Vector3(x, gy - 0.05, gz);
+    const bend = new T.Vector3(x, d.yE - P.t - 0.15, gz);
+    const knee = new T.Vector3(x, d.yE - P.t - 0.15 - Math.max(0.3, d.eo*0.55), wallZ);
+    pipe(top, bend, r, M.downpipes, 'downpipes');
+    pipe(bend, knee, r, M.downpipes, 'downpipes');
+    pipe(knee, new T.Vector3(x, 0.12, wallZ), r, M.downpipes, 'downpipes');
+  }
+  applyLook();
+}
+
+function applyLook(){
+  const L = LOOK[S.mode];
+  for (const k of Object.keys(L)) M[k].color.setHex(L[k]);
+  M.gables.map = TEX[S.mode]; M.gables.needsUpdate = true;
+  for (const k of KEYED){
+    M[k].emissive.setHex(S.sel === k ? 0xff6a00 : 0x000000);
+    M[k].emissiveIntensity = S.sel === k ? 0.6 : 0;
+  }
+}
+
+/* ---------- camera views ---------- */
+const VIEWS = {
+  overview: [27, 13, 26], entrance: [6, 6.5, -17], garden: [10, 6, 28],
+  east: [33, 6, 3], west: [-17, 6, 3], top: [8.4, 34, 9]
+};
+let tween = null;
+function goView(name){
+  const to = new T.Vector3(...VIEWS[name]);
+  tween = {from: camera.position.clone(), to, t0: performance.now(), tf: controls.target.clone()};
+}
+camera.position.set(...VIEWS.overview);
+
+function resize(){
+  const w = stage.clientWidth, h = Math.max(stage.clientHeight, 360);
+  renderer.setSize(w, h, false); camera.aspect = w/h; camera.fov = w/h < 1 ? 62 : (w/h < 1.4 ? 48 : 38); camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(stage);
+
+function loop(now){
+  if (tween){
+    const k = Math.min(1, (now - tween.t0)/650), e = k<.5 ? 2*k*k : 1 - Math.pow(-2*k+2, 2)/2;
+    camera.position.lerpVectors(tween.from, tween.to, e);
+    controls.target.lerpVectors(tween.tf, CENTER, e);
+    if (k >= 1) tween = null;
+  }
+  controls.update(); renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+
+/* ---------- picking ---------- */
+const ray = new T.Raycaster(), ndc = new T.Vector2();
+let downAt = null;
+canvas.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; tween = null; });
+canvas.addEventListener('pointerup', e => {
+  if (!downAt || Math.hypot(e.clientX-downAt[0], e.clientY-downAt[1]) > 5) return;
+  const rc = canvas.getBoundingClientRect();
+  ndc.set(((e.clientX-rc.left)/rc.width)*2-1, -((e.clientY-rc.top)/rc.height)*2+1);
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(house.children, false)[0];
+  let key = null;
+  if (hit){
+    const u = hit.object.userData;
+    key = u.keys ? u.keys[hit.face.materialIndex] : (u.key || null);
+  }
+  select(key && key === S.sel ? null : key);
+});
+
+/* ---------- side panel ---------- */
+function hex(n){ return '#' + n.toString(16).padStart(6,'0'); }
+function swatch(k){
+  if (k === 'gables') return S.mode === 'after' ? '#2a2c30' : '#ecebe6';
+  return hex(LOOK[S.mode][k]);
+}
+function renderList(){
+  const mk = (k) => {
+    const c = COMP[k];
+    return `<button class="comp${c.context?' context':''}" data-k="${k}" aria-pressed="${S.sel===k}">
+      <span class="sw" style="background:${swatch(k)}"></span>
+      <span><div class="nm">${c.name}</div><div class="dk">${c.dk}</div></span>
+      ${c.context ? '' : `<span class="pr">${c.price.replace(' incl. downpipes','')}</span>`}</button>`;
+  };
+  document.getElementById('complist').innerHTML = ORDER.map(mk).join('');
+  document.getElementById('ctxlist').innerHTML = CTX.map(mk).join('');
+  document.querySelectorAll('.comp').forEach(b => b.onclick = () => select(S.sel === b.dataset.k ? null : b.dataset.k));
+  const info = document.getElementById('info');
+  if (!S.sel){
+    info.innerHTML = `<h4>Pick a part</h4><div class="dk" style="margin:0">Click something on the house or in the list below. The selected part glows orange.</div>`;
+    return;
+  }
+  const c = COMP[S.sel];
+  info.innerHTML = `<h4>${c.name}</h4><div class="dk">${c.dk}</div>
+    <dl><dt>Material</dt><dd>${c.mat}</dd><dt>Quantity</dt><dd>${c.qty}</dd>
+    <dt>Materials</dt><dd>${c.price}</dd><dt>Labour</dt><dd>${c.labour}</dd><dt>Today</dt><dd>${c.today}</dd></dl>
+    <div class="note">${c.notes.map(n=>`<p>${n}</p>`).join('')}</div>`;
+}
+function select(k){ S.sel = k; applyLook(); renderList(); }
+
+document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => {
+  S.mode = b.dataset.mode;
+  document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  build(); renderList();
+});
+document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => goView(b.dataset.view));
+
+/* ---------- quote check ---------- */
+function verdict(est, quote, kind){
+  if (kind === 'missing') return '<span class="verdict v-bad">Not listed</span>';
+  if (kind === 'ask') return '<span class="verdict v-warn">Ask</span>';
+  const r = quote/est;
+  if (r < 0.97) return '<span class="verdict v-bad">Might be short</span>';
+  if (r <= 1.25) return '<span class="verdict v-ok">Matches</span>';
+  if (r <= 1.45) return '<span class="verdict v-warn">Generous</span>';
+  return '<span class="verdict v-warn">Much more than needed?</span>';
+}
+const f1 = n => n.toFixed(1).replace(/\.0$/, '');
+function renderCheck(){
+  const d = derive();
+  const boardCover = 3.6 * 0.15;
+  const gBoards = Math.ceil(d.gableArea / boardCover * 1.1);
+  const gBoardsBand = Math.ceil((d.gableArea + d.bandArea) / boardCover * 1.1);
+  const soffitLen = d.eaveTotal - d.eaves.swe + d.rakeTotal;
+  const eaveRows = Math.ceil((d.eo/d.cos)/0.095), gableRows = Math.ceil(d.go/0.095);
+  const soffitBoardM = ((d.eaveTotal - d.eaves.swe) * eaveRows + d.rakeTotal * gableRows) * 1.1;
+  const terraceLen = P.sz1 - P.D, terraceRows = Math.ceil(P.tW/0.095);
+  const fasciaLen = d.eaveTotal + d.rakeTotal;
+  const fasciaBoardM = fasciaLen * S.rows * 1.15;
+  const brackets = Math.ceil(d.eaveTotal / 0.6) + 5;
+  const rows = [
+    ['Gable cladding area', `${f1(d.gableArea)} m²`, '≈ 34 m² (63 boards)', verdict(d.gableArea, 34),
+      `Three gable triangles at ${S.pitch}°. HardiePlank covers about 0.54 m² per board (15 cm visible × 3.6 m).`],
+    ['HardiePlank boards, incl. 10% waste', `${gBoards}`, '70', verdict(gBoards, 70),
+      `If the dark band under the gables is also clad: ${gBoardsBand} boards. The roof pitch matters most here.`],
+    ['Overhang, running metres', `${f1(soffitLen)} m`, '≈ 75 m', verdict(soffitLen, 75),
+      `Eaves ${f1(d.eaveTotal - d.eaves.swe)} m plus sloping edges at the gables ${f1(d.rakeTotal)} m (terrace counted separately).`],
+    ['Overhang boards, metres of board', `${Math.round(soffitBoardM)} m`, '561 m (110 × 5.1)', verdict(soffitBoardM, 561),
+      `${eaveRows} rows of 95 mm under the eaves, ${gableRows} rows under the gable edges, plus 10% waste.`],
+    ['Terrace ceiling', `${f1(P.tW)} × ${f1(terraceLen)} m · ${Math.round(terraceRows*terraceLen)} m of board`, '2 × 3.5 m · 84 m (20 × 4.2)', verdict(terraceRows*terraceLen, 84),
+      'Matches the plan. The longer 4.2 m boards are cut to length.'],
+    ['Fascia & barge, running metres', `${f1(fasciaLen)} m`, '≈ 75 m', verdict(fasciaLen, 75),
+      `All eaves ${f1(d.eaveTotal)} m plus gable edges ${f1(d.rakeTotal)} m.`],
+    ['Fascia boards, metres of board', `${Math.round(fasciaBoardM)} m`, '264 m (55 × 4.8)', verdict(fasciaBoardM, 264),
+      `${S.rows} board${S.rows>1?'s':''} stacked, plus 15% for fitting and waste.`],
+    ['Gutter length', `${f1(d.eaveTotal)} m`, '36.9 m', verdict(d.eaveTotal, 36.9),
+      'Every horizontal roof edge, in three runs.'],
+    ['Gutter brackets', `${brackets}`, '66', verdict(brackets, 66), 'One every 60 cm, plus one near each end.'],
+    ['Inner corner pieces', '2', '0', verdict(0,0,'missing'), 'Two runs turn inner corners where the living-room wing meets the main house.'],
+    ['Downpipe clips (rørholdere)', 'about 9', '0', verdict(0,0,'missing'), 'About 3 per downpipe.'],
+    ['Downpipes', '3, maybe 4', '3', verdict(0,0,'ask'), 'Three visible in the photos. Two black pipes on the east gable could be a fourth.']
+  ];
+  document.querySelector('#check tbody').innerHTML = rows.map(r =>
+    `<tr><td><b>${r[0]}</b><div class="muted">${r[4]}</div></td><td class="num">${r[1]}</td><td class="num">${r[2]}</td><td>${r[3]}</td></tr>`).join('');
+}
+
+function bindRange(id, key, fmtv){
+  const i = document.getElementById('i-'+id), o = document.getElementById('o-'+id);
+  i.value = S[key]; o.textContent = fmtv(S[key]);
+  i.oninput = () => { S[key] = parseFloat(i.value); o.textContent = fmtv(S[key]); build(); renderCheck(); };
+}
+bindRange('pitch','pitch', v => v + '°');
+bindRange('eo','eo', v => v.toFixed(2) + ' m');
+bindRange('go','go', v => v.toFixed(2) + ' m');
+bindRange('rows','rows', v => v + (v>1 ? ' boards (≈' + Math.round(v*12) + ' cm)' : ' board (12 cm)'));
+
+/* ---------- timeline ---------- */
+const TL = [['Tear-out',2,'#7a7f87'],['Gables',3,'#d9731a'],['Fascia',2,'#8a5a2b'],['Overhang',4,'#3d6f8f'],['Gutters',1,'#2e7a4d']];
+document.getElementById('timeline').innerHTML = TL.map(([n,dd,c]) =>
+  `<div style="flex:${dd};background:${c}">${n}<br>${dd} day${dd>1?'s':''}</div>`).join('');
+
+/* ---------- photos ---------- */
+const lb = document.getElementById('lightbox');
+document.getElementById('photos').innerHTML = PHOTOS.map((p,i) =>
+  `<figure data-i="${i}"><img src="${p.src}" alt="${p.alt}" loading="lazy"><figcaption><b>${p.title}</b> ${p.caption}</figcaption></figure>`).join('');
+document.querySelectorAll('.photos figure').forEach(f => f.onclick = () => {
+  const p = PHOTOS[+f.dataset.i]; lb.querySelector('img').src = p.src; lb.querySelector('p').textContent = p.title + ' ' + p.caption;
+  lb.showModal();
+});
+lb.onclick = () => lb.close();
+
+/* ---------- theme-aware sky ---------- */
+function sky(){ scene.background = new T.Color(getComputedStyle(document.documentElement).getPropertyValue('--sky').trim() || '#dbe7f1'); }
+if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', sky);
+
+const H = new URLSearchParams(location.hash.slice(1));
+if (H.get('mode') === 'today' || H.get('mode') === 'after'){ S.mode = H.get('mode'); document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x.dataset.mode === S.mode)); }
+if (VIEWS[H.get('view')]) camera.position.set(...VIEWS[H.get('view')]);
+if (COMP[H.get('sel')]) S.sel = H.get('sel');
+sky(); build(); renderList(); renderCheck(); resize(); requestAnimationFrame(loop);
+</script>
+</body>
+</html>

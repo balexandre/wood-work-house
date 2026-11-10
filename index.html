@@ -141,7 +141,6 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
     </div>
   </header>
   <div class="chips">
-    <span class="chip bad">VAT (moms) not stated</span>
     <span class="chip warn">Scaffolding not mentioned in writing</span>
     <span class="chip warn">You haul away the old materials</span>
     <span class="chip">Measurements from the floor plan; roof shape estimated from photos</span>
@@ -230,15 +229,13 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
     <p class="lede">The Danish line under each one is ready to paste into your reply.</p>
     <div class="card">
       <ol class="q">
-        <li><b>Is VAT included?</b> If not, the total is 110,843 kr.<div class="da">Er priserne inkl. moms?</div></li>
         <li><b>Scaffolding in writing.</b> You were told it's free, but the quote doesn't mention it.<div class="da">Vil I skrive ind i tilbuddet, at stillads/lift er inkluderet i prisen?</div></li>
         <li><b>75 m of overhang and fascia.</b> I estimate about 62–65 m from the plan. What else is included?<div class="da">Hvad er med i de ca. 75 løbende meter udhæng og stern?</div></li>
         <li><b>Horizontal boards on the gables.</b> HardiePlank goes on horizontally, so the look changes from today's vertical boards.<div class="da">Monteres HardiePlank vandret på gavlene?</div></li>
         <li><b>The dark band above the brickwork.</b> It isn't mentioned. Is it replaced or left as it is?<div class="da">Udskiftes det mørke bræt/den mørke beklædning over murværket, eller bliver det siddende?</div></li>
-        <li><b>Where the new gutters sit.</b> Today they're hidden behind a tall fascia. With brackets they normally hang in front of it, where you can see them.<div class="da">Bliver de nye tagrender hængt synligt foran sternen, eller skjult bag den som i dag?</div></li>
-        <li><b>Missing gutter parts.</b> No inner corners for the two inner corners, no downpipe clips, and only 3 joiners for about 37 m of gutter.<div class="da">Er indvendige hjørner, rørholdere og nok samlestykker med i prisen?</div></li>
+        <li><b>Gutter fittings.</b> The new gutters hang in front of the fascia. The 66 konsoljern in the quote are the brackets that hold them there, about one every 56 cm, so check they're the kind that screw onto the fascia. Not listed: corner pieces for the two inner corners, downpipe clips, and more than 3 joiners for about 37 m of gutter.<div class="da">Er de 66 konsoljern til montering på sternen? Og er indvendige hjørner, rørholdere og nok samlestykker med i prisen?</div></li>
         <li><b>How many downpipes?</b> Two black pipes run up the east gable into the soffit. If one is a downpipe, the house has 4 and the quote lists 3.<div class="da">Er der regnet med alle nedløb – også ved østgavlen?</div></li>
-        <li><b>Asbestos.</b> The old gable boards and the roof sheets may be fibre cement. If they are from before 1987 they can contain asbestos and must be handled and disposed of by the rules.<div class="da">Er de gamle gavlplader og tagpladerne asbestfri? Hvordan håndteres det?</div></li>
+        <li><b>Working next to the asbestos roof.</b> The roof sheets are asbestos cement and stay as they are, but the new fascia and gutters go on right at their edge, so the sheets mustn't be cut, drilled or broken. Also ask whether any of the old materials coming down contain asbestos. You take them away yourself, and asbestos has to be wrapped and handed in separately.<div class="da">Hvordan sikrer I, at tagpladerne ikke bliver skåret, boret eller knækket, når stern og tagrender monteres? Og indeholder noget af det nedrevne materiale asbest?</div></li>
         <li><b>Hidden damage and terms.</b> The hourly rate if rot turns up, the payment plan, the start date, and whether AB-Forbruger applies.<div class="da">Hvad er timeprisen for ekstraarbejde ved råd? Arbejdes der efter AB-Forbruger?</div></li>
       </ol>
     </div>
@@ -298,13 +295,13 @@ const PHOTOS = [
   {
     "src": "photos/IMG_2497.jpg",
     "title": "Roof edge.",
-    "caption": "The gutter is hidden behind a tall fascia. The roof sheets look like fibre cement.",
+    "caption": "The gutter is hidden behind a tall fascia. The roof sheets are asbestos cement and stay as they are.",
     "alt": "Roof edge."
   },
   {
     "src": "photos/IMG_2498.jpg",
     "title": "Soffit from below.",
-    "caption": "Flaking paint and a damaged spot in the boards.",
+    "caption": "Flaking paint and rot in the boards, where water from the hidden gutter gets in. Moving the gutter in front of the fascia should stop this.",
     "alt": "Soffit from below."
   },
   {
@@ -324,7 +321,7 @@ const DAY = 32800/12;
 const COMP = {
   gables:{name:'Gable cladding', dk:'Gavlbeklædning', price:'7,350 kr.', mat:'HardiePlank fibre cement, wood texture, black, 8 × 180 × 3600 mm',
     qty:'70 boards (about 63 + 7 for waste)', labour:'3 days · about 8,200 kr.', today:'Vertical white boards, weathered and mouldy.',
-    notes:['HardiePlank is fitted horizontally with overlapping boards, so the gables will show horizontal lines instead of today\'s vertical boards.','The old boards may be fibre cement. If they are from before 1987, they could contain asbestos.']},
+    notes:['HardiePlank is fitted horizontally with overlapping boards, so the gables will show horizontal lines instead of today\'s vertical boards.','The house is from the 1970s. If the old boards are fibre cement, they contain asbestos and have to be wrapped and handed in separately when you take them away.']},
   soffit:{name:'Overhang / soffit', dk:'Udhæng', price:'18,709 kr.', mat:'Black-painted spruce 19 × 100 mm (16 × 95 mm finished)',
     qty:'110 boards × 5.1 m for about 75 m of overhang', labour:'4 days · about 10,933 kr.', today:'White painted boards, flaking, with at least one damaged spot.',
     notes:['The price includes the terrace ceiling.','The underside of every overhang turns from white to black.']},
@@ -335,17 +332,17 @@ const COMP = {
     qty:'55 boards for about 75 m', labour:'2 days · about 5,467 kr.', today:'Tall black fascia with the gutter hidden behind it. Barge boards on the gables are doubled and peeling.',
     notes:['264 m of board for 75 m of edge means about 3 boards stacked (≈36 cm). That matches today\'s tall fascia, so the quantity makes sense.']},
   gutters:{name:'Gutters', dk:'Tagrender', price:'18,705 kr. incl. downpipes', mat:'Plastmo no. 12, black steel',
-    qty:'36.9 m, 66 brackets, 6 end caps, 3 joiners', labour:'1 day · about 2,733 kr.', today:'Hidden behind the tall fascia.',
-    notes:['6 end caps means 3 separate runs. Two of them turn an inner corner, but no corner pieces are listed.','Brackets (konsoljern) normally hang the gutter in front of the fascia, so the new gutters will probably be visible. The model assumes that.']},
+    qty:'36.9 m, 66 brackets, 6 end caps, 3 joiners', labour:'1 day · about 2,733 kr.', today:'Hidden behind the tall fascia, where water gets into the wood. The soffit photo shows the rot.',
+    notes:['The new gutters hang in front of the fascia on the 66 brackets (konsoljern). There they are easier to clean and keep water away from the wood.','6 end caps means 3 separate runs. Two of them turn an inner corner, but no corner pieces are listed.']},
   downpipes:{name:'Downpipes', dk:'Nedløb', price:'in the gutter price', mat:'Plastmo black steel',
     qty:'3 × 3 m, 3 outlets 75 mm, various bends', labour:'part of the gutter day', today:'White pipes. Positions in the model are approximate.',
     notes:['No downpipe clips (rørholdere) are listed.','Two black pipes run up the east gable. If one is a downpipe, the house has 4.']},
   band:{name:'Dark band above brickwork', dk:'Not in the quote', price:'—', mat:'Existing dark boards between the brickwork and the roof',
     qty:'—', labour:'—', today:'Dark boards, horizontal under the gables, vertical along the eaves.',
     notes:['The quote doesn\'t say whether this is replaced. Ask, because it sits right where the new gables and soffit meet the wall.'], context:true},
-  roof:{name:'Roof', dk:'Not part of this job', price:'—', mat:'Looks like corrugated fibre-cement sheets made to look like tiles',
+  roof:{name:'Roof', dk:'Not part of this job', price:'—', mat:'Corrugated asbestos-cement sheets made to look like tiles (1970s)',
     qty:'—', labour:'—', today:'Dark sheets, mossy at the edges.',
-    notes:['If the sheets are from before 1987 they may contain asbestos. They should not be cut or ground while the new fascia and gutters go on.'], context:true}
+    notes:['The roof is not touched in this job. The new fascia and gutters go on right at its edge, so the sheets must not be cut, drilled or broken.'], context:true}
 };
 const ORDER = ['gables','soffit','terrace','fascia','gutters','downpipes'];
 const CTX = ['band','roof'];

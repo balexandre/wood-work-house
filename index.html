@@ -437,18 +437,39 @@ function stripeTex(bg, line, vertical){
   }
   const t = new T.CanvasTexture(c); t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 4; return t;
 }
+// Overlapped (klink) boards: each board's lower edge laps over the board below and
+// throws a shadow on it, the face catches more light towards its edge, plus faint grain.
+function lapTex(bg){
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const g = c.getContext('2d');
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let p = 0; p < 256; p += 64){
+    g.fillStyle = bg; g.fillRect(0, p, 256, 64);
+    const gr = g.createLinearGradient(0, p, 0, p + 64);
+    gr.addColorStop(0, 'rgba(0,0,0,.10)'); gr.addColorStop(1, 'rgba(255,255,255,.07)');
+    g.fillStyle = gr; g.fillRect(0, p, 256, 64);
+    for (let i = 0; i < 14; i++){
+      g.fillStyle = rnd() < .5 ? 'rgba(0,0,0,.05)' : 'rgba(255,255,255,.05)';
+      g.fillRect(rnd()*200 - 40, p + 8 + rnd()*52, 60 + rnd()*160, 1);
+    }
+    g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(0, p, 256, 4);     // shadow under the board above
+    g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(0, p + 4, 256, 4);
+    g.fillStyle = 'rgba(255,255,255,.22)'; g.fillRect(0, p + 62, 256, 2);  // lit lower edge
+  }
+  const t = new T.CanvasTexture(c); t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 8; return t;
+}
 // HardiePlank wood texture colours (screen approximations; check a real sample before choosing)
 const COLOURS = {
-  hvid:     {name:'White',           dk:'Hvid',        bg:'#eeede8', line:'#c6c4bd'},
-  lysgraa:  {name:'Light grey',      dk:'Lysgrå',      bg:'#b3b6b4', line:'#8e9290'},
-  antracit: {name:'Anthracite grey', dk:'Antracitgrå', bg:'#4a4f55', line:'#63686e'},
-  sort:     {name:'Black',           dk:'Sort',        bg:'#2a2c30', line:'#45484e'}
+  hvid:     {name:'White',           dk:'Hvid',        bg:'#eeede8'},
+  lysgraa:  {name:'Light grey',      dk:'Lysgrå',      bg:'#b3b6b4'},
+  antracit: {name:'Anthracite grey', dk:'Antracitgrå', bg:'#4a4f55'},
+  sort:     {name:'Black',           dk:'Sort',        bg:'#2a2c30'}
 };
 const TEX = {
   today: (()=>{ const t = stripeTex('#ecebe6', '#b9b7b0', true); t.repeat.set(1/0.48, 1/0.48); return t; })()
 };
 function afterTex(k){
-  if (!TEX[k]){ const c = COLOURS[k]; const t = stripeTex(c.bg, c.line, false); t.repeat.set(1/0.6, 1/0.6); TEX[k] = t; }
+  if (!TEX[k]){ const c = COLOURS[k]; const t = lapTex(c.bg); t.repeat.set(1/0.6, 1/0.6); TEX[k] = t; }
   return TEX[k];
 }
 

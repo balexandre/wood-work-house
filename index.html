@@ -51,7 +51,11 @@ section{margin-top:40px}
 .seg{display:inline-flex;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .seg button{border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;padding:5px 10px;border-radius:7px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--text);color:var(--surface)}
-.hint{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--muted);background:color-mix(in srgb,var(--surface) 80%,transparent);padding:3px 8px;border-radius:6px}
+.colours{position:absolute;left:12px;bottom:12px;right:12px;display:flex;pointer-events:none}
+.colours .seg{pointer-events:auto;align-items:center}
+.seg .lbl{font-size:12px;color:var(--muted);padding:0 6px 0 8px}
+.seg .dot{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid rgba(127,127,127,.55);margin-right:6px;vertical-align:-2px}
+.hint{position:absolute;right:12px;top:auto;bottom:58px;font-size:12px;color:var(--muted);background:color-mix(in srgb,var(--surface) 80%,transparent);padding:3px 8px;border-radius:6px}
 .side{padding:14px;display:flex;flex-direction:column;gap:12px;max-height:620px;overflow:auto}
 .side h3{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:2px 0 0}
 .comp{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;padding:6px 10px;font:inherit;cursor:pointer}
@@ -125,6 +129,12 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
   .assume{grid-template-columns:repeat(2,minmax(0,1fr))}
   .total{text-align:left}
 }
+@media (max-width:600px){
+  .hint{display:none}
+  .seg .lbl{flex-basis:100%;padding:2px 8px 4px}
+  .colours .seg button{padding:5px 6px;font-size:12.5px}
+  .seg .dot{margin-right:4px}
+}
 </style>
 </head>
 <body>
@@ -148,7 +158,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
 
   <section style="margin-top:22px">
     <h2>The house in 3D</h2>
-    <p class="lede">Drag to rotate, scroll or pinch to zoom. Click a part, or pick one from the list, to see what the quote says about it. Switch between <b>Today</b> and <b>After the work</b> to compare.</p>
+    <p class="lede">Drag to rotate, scroll or pinch to zoom. Click a part, or pick one from the list, to see what the quote says about it. Switch between <b>Today</b> and <b>After the work</b> to compare, and try the four HardiePlank colours on the gables with <b>Gable colour</b>. The dark band, fascia and soffit stay black.</p>
     <div class="viewer card">
       <div class="stage" id="stage">
         <canvas id="scene" aria-label="3D model of the house"></canvas>
@@ -164,6 +174,15 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
             <button data-view="east">East gable</button>
             <button data-view="west">West gable</button>
             <button data-view="top">Above</button>
+          </div>
+        </div>
+        <div class="colours">
+          <div class="seg" role="group" aria-label="Gable colour">
+            <span class="lbl">Gable colour</span>
+            <button data-colour="hvid" aria-pressed="false"><span class="dot"></span>White</button>
+            <button data-colour="lysgraa" aria-pressed="false"><span class="dot"></span>Light grey</button>
+            <button data-colour="antracit" aria-pressed="false"><span class="dot"></span>Anthracite</button>
+            <button data-colour="sort" aria-pressed="true"><span class="dot"></span>Black</button>
           </div>
         </div>
         <div class="hint">Plan top ≈ north (entrance side)</div>
@@ -314,14 +333,15 @@ const PHOTOS = [
 
 /* ---------- data ---------- */
 const P = {L:16.34, D:7.92, sx0:6.59, sx1:12.43, sz1:11.39, tW:2.0, wallH:2.6, brickH:2.35, t:0.3};
-const S = {pitch:30, eo:0.7, go:0.6, rows:3, mode:'after', sel:null};
+const S = {pitch:30, eo:0.7, go:0.6, rows:3, mode:'after', colour:'sort', sel:null};
 const fmt = n => n.toLocaleString('en-US').replace(/,/g, ',') + ' kr.';
 const DAY = 32800/12;
 
 const COMP = {
   gables:{name:'Gable cladding', dk:'Gavlbeklædning', price:'7,350 kr.', mat:'HardiePlank fibre cement, wood texture, black, 8 × 180 × 3600 mm',
     qty:'70 boards (about 63 + 7 for waste)', labour:'3 days · about 8,200 kr.', today:'Vertical white boards, weathered and mouldy.',
-    notes:['HardiePlank is fitted horizontally with overlapping boards, so the gables will show horizontal lines instead of today\'s vertical boards.','The house is from the 1970s. If the old boards are fibre cement, they contain asbestos and have to be wrapped and handed in separately when you take them away.']},
+    notes:['The quote says black. HardiePlank wood texture also comes in white, light grey and anthracite grey, and all four cost 105 kr. per board at Davidsen. That is exactly what the quote charges (70 × 105 = 7,350 kr.), so the colour doesn\'t change the price. Colours on screen are approximate, so look at a real board before choosing.',
+      'HardiePlank is fitted horizontally with overlapping boards, so the gables will show horizontal lines instead of today\'s vertical boards.','The house is from the 1970s. If the old boards are fibre cement, they contain asbestos and have to be wrapped and handed in separately when you take them away.']},
   soffit:{name:'Overhang / soffit', dk:'Udhæng', price:'18,709 kr.', mat:'Black-painted spruce 19 × 100 mm (16 × 95 mm finished)',
     qty:'110 boards × 5.1 m for about 75 m of overhang', labour:'4 days · about 10,933 kr.', today:'White painted boards, flaking, with at least one damaged spot.',
     notes:['The price includes the terrace ceiling.','The underside of every overhang turns from white to black.']},
@@ -417,10 +437,20 @@ function stripeTex(bg, line, vertical){
   }
   const t = new T.CanvasTexture(c); t.wrapS = t.wrapT = T.RepeatWrapping; t.anisotropy = 4; return t;
 }
-const TEX = {
-  today: (()=>{ const t = stripeTex('#ecebe6', '#b9b7b0', true); t.repeat.set(1/0.48, 1/0.48); return t; })(),
-  after: (()=>{ const t = stripeTex('#2a2c30', '#45484e', false); t.repeat.set(1/0.6, 1/0.6); return t; })()
+// HardiePlank wood texture colours (screen approximations; check a real sample before choosing)
+const COLOURS = {
+  hvid:     {name:'White',           dk:'Hvid',        bg:'#eeede8', line:'#c6c4bd'},
+  lysgraa:  {name:'Light grey',      dk:'Lysgrå',      bg:'#b3b6b4', line:'#8e9290'},
+  antracit: {name:'Anthracite grey', dk:'Antracitgrå', bg:'#4a4f55', line:'#63686e'},
+  sort:     {name:'Black',           dk:'Sort',        bg:'#2a2c30', line:'#45484e'}
 };
+const TEX = {
+  today: (()=>{ const t = stripeTex('#ecebe6', '#b9b7b0', true); t.repeat.set(1/0.48, 1/0.48); return t; })()
+};
+function afterTex(k){
+  if (!TEX[k]){ const c = COLOURS[k]; const t = stripeTex(c.bg, c.line, false); t.repeat.set(1/0.6, 1/0.6); TEX[k] = t; }
+  return TEX[k];
+}
 
 const lam = (c, o={}) => new T.MeshLambertMaterial(Object.assign({color:c}, o));
 const M = {
@@ -428,7 +458,7 @@ const M = {
   ground: lam(0x6c8c52), paving: lam(0xa8a398),
   roof: lam(0x3a3d41, {side:T.DoubleSide}), soffit: lam(0xdcd8cf, {side:T.DoubleSide}),
   terrace: lam(0xe4e1d9, {side:T.DoubleSide}), fascia: lam(0x2c2f34, {side:T.DoubleSide}),
-  gables: lam(0xffffff, {side:T.DoubleSide, map:TEX.after}), gutters: lam(0x1f2023), downpipes: lam(0x1f2023),
+  gables: lam(0xffffff, {side:T.DoubleSide, map:afterTex('sort')}), gutters: lam(0x1f2023), downpipes: lam(0x1f2023),
   band: lam(0x2a2c30)
 };
 const KEYED = ['roof','soffit','terrace','fascia','gables','gutters','downpipes','band'];
@@ -573,7 +603,7 @@ function build(){
 function applyLook(){
   const L = LOOK[S.mode];
   for (const k of Object.keys(L)) M[k].color.setHex(L[k]);
-  M.gables.map = TEX[S.mode]; M.gables.needsUpdate = true;
+  M.gables.map = S.mode === 'after' ? afterTex(S.colour) : TEX.today; M.gables.needsUpdate = true;
   for (const k of KEYED){
     M[k].emissive.setHex(S.sel === k ? 0xff6a00 : 0x000000);
     M[k].emissiveIntensity = S.sel === k ? 0.6 : 0;
@@ -630,7 +660,7 @@ canvas.addEventListener('pointerup', e => {
 /* ---------- side panel ---------- */
 function hex(n){ return '#' + n.toString(16).padStart(6,'0'); }
 function swatch(k){
-  if (k === 'gables') return S.mode === 'after' ? '#2a2c30' : '#ecebe6';
+  if (k === 'gables') return S.mode === 'after' ? COLOURS[S.colour].bg : '#ecebe6';
   return hex(LOOK[S.mode][k]);
 }
 function renderList(){
@@ -657,10 +687,26 @@ function renderList(){
 }
 function select(k){ S.sel = k; applyLook(); renderList(); }
 
-document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => {
-  S.mode = b.dataset.mode;
-  document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b));
+function setMode(m){
+  S.mode = m;
+  document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x.dataset.mode === m));
   build(); renderList();
+}
+document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => setMode(b.dataset.mode));
+
+function setColour(k){
+  S.colour = k;
+  const c = COLOURS[k];
+  COMP.gables.mat = `HardiePlank fibre cement, wood texture, ${c.name.toLowerCase()} (${c.dk.toLowerCase()}), 8 × 180 × 3600 mm`;
+  document.querySelectorAll('[data-colour]').forEach(x => x.setAttribute('aria-pressed', x.dataset.colour === k));
+}
+document.querySelectorAll('[data-colour]').forEach(b => {
+  b.querySelector('.dot').style.background = COLOURS[b.dataset.colour].bg;
+  b.onclick = () => {
+    setColour(b.dataset.colour);
+    if (S.sel === 'gables') S.sel = null;  // the orange highlight would hide the colour
+    if (S.mode !== 'after') setMode('after'); else { applyLook(); renderList(); }
+  };
 });
 document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => goView(b.dataset.view));
 
@@ -746,6 +792,7 @@ const H = new URLSearchParams(location.hash.slice(1));
 if (H.get('mode') === 'today' || H.get('mode') === 'after'){ S.mode = H.get('mode'); document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x.dataset.mode === S.mode)); }
 if (VIEWS[H.get('view')]) camera.position.set(...VIEWS[H.get('view')]);
 if (COMP[H.get('sel')]) S.sel = H.get('sel');
+setColour(COLOURS[H.get('colour')] ? H.get('colour') : 'sort');
 sky(); build(); renderList(); renderCheck(); resize(); requestAnimationFrame(loop);
 </script>
 </body>

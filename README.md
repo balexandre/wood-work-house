@@ -8,7 +8,7 @@ The quote is a list of materials and quantities. That's hard to picture, and har
 
 ## What's on the page
 
-- **A 3D model you can rotate.** Switch between **Today** and **After the work**, or jump to a camera view (entrance, garden, east gable, west gable, above). Click a part on the house, or in the list beside it, to see the material, quantity and price the quote gives for it.
+- **A 3D model you can rotate.** Switch between **Today** and **After the work**, or jump to a camera view (entrance, garden, east gable, west gable, above). Click a part on the house, or in the list beside it, to see the material, quantity and price the quote gives for it. **Gable colour** shows the gables in each of the four HardiePlank colours (white, light grey, anthracite grey, black); the dark band, fascia and soffit stay black.
 - **Does the quote match the house?** My estimate for each line of the quote next to the quoted amount, each with a verdict: *Matches*, *Generous*, *Not listed* or *Ask*. Sliders for the roof pitch, the overhang depths and the fascia height update both the table and the model.
 - **Materials and prices.** Everything in quote 2, with an estimated split of the labour by task.
 - **Work plan.** The 12 working days in the order the quote lists them.
@@ -28,6 +28,7 @@ The quote is a list of materials and quantities. That's hard to picture, and har
 
 - **Free scaffolding** needs to be in writing.
 - **The gables will look different.** HardiePlank goes on horizontally, while today's boards are vertical.
+- **Gable colour is free to choose.** The quote says black, but all four HardiePlank wood-texture colours cost 105 kr. per board at Davidsen, the same price the quote uses (70 × 105 = 7,350 kr.).
 - **Gutter fittings.** The new gutters hang in front of the fascia, where they're easier to clean and keep water off the wood. Today they're hidden behind it, and the soffit has rotted. The 66 konsoljern in the quote are the brackets that hold the gutters, so check they're the kind that screw onto the fascia. Not listed: inner corner pieces (the roof has two inner corners), downpipe clips, and more than 3 joiners.
 - **"75 m" of overhang and fascia** looks high. The plan gives about 62–65 m.
 - **The dark band above the brickwork** isn't mentioned in the quote.
@@ -52,8 +53,9 @@ The page loads [three.js](https://threejs.org/) r128 from the jsDelivr CDN, so t
 Everything is in `index.html`:
 
 - `P` holds the house dimensions from the floor plan, in metres.
-- `S` holds the starting values for the sliders: pitch, eave overhang, gable overhang and fascia rows.
+- `S` holds the starting values for the sliders (pitch, eave overhang, gable overhang, fascia rows) and the starting gable colour.
+- `COLOURS` holds the four HardiePlank colours. The hex values are on-screen guesses, because Davidsen doesn't publish colour codes. Replace them if you get official ones.
 - `COMP` holds each part of the job: name, material, quantity, price and notes.
 - `PHOTOS` lists the photos and their captions.
 
-You can link straight to a view and a part, for example `index.html#view=garden&mode=today&sel=gutters`.
+You can link straight to a view and a part, for example `index.html#view=garden&mode=today&sel=gutters`, or to a gable colour with `#colour=lysgraa` (`hvid`, `lysgraa`, `antracit`, `sort`).

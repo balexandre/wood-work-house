@@ -8,11 +8,11 @@ The quote is a list of materials and quantities. That's hard to picture, and har
 
 ## What's on the page
 
-- **A 3D model you can rotate.** Switch between **Today** and **After the work**, or jump to a camera view (entrance, garden, east gable, west gable, above). Click a part on the house, or in the list beside it, to see the material, quantity and price the quote gives for it. **Gable colour** shows the gables in each of the four HardiePlank colours (white, light grey, anthracite grey, black); the dark band, fascia and soffit stay black.
+- **A 3D model you can rotate.** Switch between **Today** and **After the work**, or jump to a camera view (entrance, garden, east gable, west gable, above, terrace ceiling). You can drag the camera up to 30° below the ground to look up at the soffits. Click a part on the house, or in the list beside it, to see the material, quantity and price the quote gives for it. **Gable colour** shows the gables in each of the four HardiePlank colours (white, light grey, anthracite grey, black); the dark band, fascia and soffit stay black.
 - **Does the quote match the house?** My estimate for each line of the quote next to the quoted amount, each with a verdict: *Matches*, *Generous*, *Not listed* or *Ask*. Sliders for the roof pitch, the overhang depths and the fascia height update both the table and the model.
 - **Materials and prices.** Everything in quote 2, with an estimated split of the labour by task.
 - **Work plan.** The 12 working days in the order the quote lists them.
-- **Questions to ask before signing.** Eight questions, each with a Danish line ready to paste into a reply.
+- **Questions to ask before signing.** Six questions, each with a Danish line ready to paste into a reply.
 - **Photos.** Nine photos of the house, each with a note on what it shows that matters for the job. Click one to enlarge it.
 
 ## The quote in short
@@ -31,7 +31,6 @@ The quote is a list of materials and quantities. That's hard to picture, and har
 - **Gable colour is free to choose.** The quote says black, but all four HardiePlank wood-texture colours cost 105 kr. per board at Davidsen, the same price the quote uses (70 × 105 = 7,350 kr.).
 - **Gutter fittings.** The new gutters hang in front of the fascia, where they're easier to clean and keep water off the wood. Today they're hidden behind it, and the soffit has rotted. The 66 konsoljern in the quote are the brackets that hold the gutters, so check they're the kind that screw onto the fascia. Not listed: inner corner pieces (the roof has two inner corners), downpipe clips, and more than 3 joiners.
 - **"75 m" of overhang and fascia** looks high. The plan gives about 62–65 m.
-- **The dark band above the brickwork** isn't mentioned in the quote.
 - **The roof is asbestos cement.** It isn't part of the job, but the new fascia and gutters go on right at its edge, so the sheets mustn't be cut, drilled or broken. We take the old materials away ourselves, so ask whether any of them contain asbestos too: that has to be wrapped and handed in separately.
 
 ## How the measurements were made

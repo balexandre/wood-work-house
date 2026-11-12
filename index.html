@@ -158,7 +158,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
 
   <section style="margin-top:22px">
     <h2>The house in 3D</h2>
-    <p class="lede">Drag to rotate, scroll or pinch to zoom. Click a part, or pick one from the list, to see what the quote says about it. Switch between <b>Today</b> and <b>After the work</b> to compare, and try the four HardiePlank colours on the gables with <b>Gable colour</b>. The dark band, fascia and soffit stay black.</p>
+    <p class="lede">Drag to rotate, scroll or pinch to zoom. You can drag below the ground to look up at the soffits, or use <b>Terrace ceiling</b>. Click a part, or pick one from the list, to see what the quote says about it. Switch between <b>Today</b> and <b>After the work</b> to compare, and try the four HardiePlank colours on the gables with <b>Gable colour</b>. The dark band, fascia and soffit stay black.</p>
     <div class="viewer card">
       <div class="stage" id="stage">
         <canvas id="scene" aria-label="3D model of the house"></canvas>
@@ -174,6 +174,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
             <button data-view="east">East gable</button>
             <button data-view="west">West gable</button>
             <button data-view="top">Above</button>
+            <button data-view="terrace">Terrace ceiling</button>
           </div>
         </div>
         <div class="colours">
@@ -251,9 +252,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
         <li><b>Scaffolding in writing.</b> You were told it's free, but the quote doesn't mention it.<div class="da">Vil I skrive ind i tilbuddet, at stillads/lift er inkluderet i prisen?</div></li>
         <li><b>75 m of overhang and fascia.</b> I estimate about 62–65 m from the plan. What else is included?<div class="da">Hvad er med i de ca. 75 løbende meter udhæng og stern?</div></li>
         <li><b>Horizontal boards on the gables.</b> HardiePlank goes on horizontally, so the look changes from today's vertical boards.<div class="da">Monteres HardiePlank vandret på gavlene?</div></li>
-        <li><b>The dark band above the brickwork.</b> It isn't mentioned. Is it replaced or left as it is?<div class="da">Udskiftes det mørke bræt/den mørke beklædning over murværket, eller bliver det siddende?</div></li>
         <li><b>Gutter fittings.</b> The new gutters hang in front of the fascia. The 66 konsoljern in the quote are the brackets that hold them there, about one every 56 cm, so check they're the kind that screw onto the fascia. Not listed: corner pieces for the two inner corners, downpipe clips, and more than 3 joiners for about 37 m of gutter.<div class="da">Er de 66 konsoljern til montering på sternen? Og er indvendige hjørner, rørholdere og nok samlestykker med i prisen?</div></li>
-        <li><b>How many downpipes?</b> Two black pipes run up the east gable into the soffit. If one is a downpipe, the house has 4 and the quote lists 3.<div class="da">Er der regnet med alle nedløb – også ved østgavlen?</div></li>
         <li><b>Working next to the asbestos roof.</b> The roof sheets are asbestos cement and stay as they are, but the new fascia and gutters go on right at their edge, so the sheets mustn't be cut, drilled or broken. Also ask whether any of the old materials coming down contain asbestos. You take them away yourself, and asbestos has to be wrapped and handed in separately.<div class="da">Hvordan sikrer I, at tagpladerne ikke bliver skåret, boret eller knækket, når stern og tagrender monteres? Og indeholder noget af det nedrevne materiale asbest?</div></li>
         <li><b>Hidden damage and terms.</b> The hourly rate if rot turns up, the payment plan, the start date, and whether AB-Forbruger applies.<div class="da">Hvad er timeprisen for ekstraarbejde ved råd? Arbejdes der efter AB-Forbruger?</div></li>
       </ol>
@@ -296,7 +295,7 @@ const PHOTOS = [
   {
     "src": "photos/IMG_2488.jpg",
     "title": "East gable.",
-    "caption": "Three windows, the heat pump, and the terrace roof on the left. Note the dark band above the brickwork and the two black pipes.",
+    "caption": "Three windows, the heat pump, and the terrace roof on the left. The two black pipes are the heat pump's, not downpipes.",
     "alt": "East gable."
   },
   {
@@ -356,10 +355,10 @@ const COMP = {
     notes:['The new gutters hang in front of the fascia on the 66 brackets (konsoljern). There they are easier to clean and keep water away from the wood.','6 end caps means 3 separate runs. Two of them turn an inner corner, but no corner pieces are listed.']},
   downpipes:{name:'Downpipes', dk:'Nedløb', price:'in the gutter price', mat:'Plastmo black steel',
     qty:'3 × 3 m, 3 outlets 75 mm, various bends', labour:'part of the gutter day', today:'White pipes. Positions in the model are approximate.',
-    notes:['No downpipe clips (rørholdere) are listed.','Two black pipes run up the east gable. If one is a downpipe, the house has 4.']},
-  band:{name:'Dark band above brickwork', dk:'Not in the quote', price:'—', mat:'Existing dark boards between the brickwork and the roof',
+    notes:['No downpipe clips (rørholdere) are listed.','The house has 3 downpipes, as in the quote. The two black pipes on the east gable belong to the heat pump.']},
+  band:{name:'Dark band above brickwork', dk:'Stays as it is', price:'—', mat:'Existing dark boards between the brickwork and the roof',
     qty:'—', labour:'—', today:'Dark boards, horizontal under the gables, vertical along the eaves.',
-    notes:['The quote doesn\'t say whether this is replaced. Ask, because it sits right where the new gables and soffit meet the wall.'], context:true},
+    notes:['Not part of this job: the carpenter confirmed it stays as it is.'], context:true},
   roof:{name:'Roof', dk:'Not part of this job', price:'—', mat:'Corrugated asbestos-cement sheets made to look like tiles (1970s)',
     qty:'—', labour:'—', today:'Dark sheets, mossy at the edges.',
     notes:['The roof is not touched in this job. The new fascia and gutters go on right at its edge, so the sheets must not be cut, drilled or broken.'], context:true}
@@ -412,7 +411,7 @@ const scene = new T.Scene();
 const camera = new T.PerspectiveCamera(38, 1, 0.1, 300);
 const controls = new T.OrbitControls(camera, canvas);
 controls.enableDamping = true;
-controls.maxPolarAngle = Math.PI/2 - 0.04;
+controls.maxPolarAngle = Math.PI/2 + Math.PI/6;  // up to 30° below the ground, to look up at soffits and the terrace ceiling
 controls.minDistance = 6; controls.maxDistance = 70;
 const CENTER = new T.Vector3(8.4, 1.8, 6.2);
 controls.target.copy(CENTER);
@@ -634,12 +633,14 @@ function applyLook(){
 /* ---------- camera views ---------- */
 const VIEWS = {
   overview: [27, 13, 26], entrance: [6, 6.5, -17], garden: [10, 6, 28],
-  east: [33, 6, 3], west: [-17, 6, 3], top: [8.4, 34, 9]
+  east: [33, 6, 3], west: [-17, 6, 3], top: [8.4, 34, 9], terrace: [19.2, -1.9, 16]
 };
+// views that look at something other than the middle of the house
+const TARGETS = { terrace: new T.Vector3(13.4, 2.3, 9.65) };
 let tween = null;
 function goView(name){
   const to = new T.Vector3(...VIEWS[name]);
-  tween = {from: camera.position.clone(), to, t0: performance.now(), tf: controls.target.clone()};
+  tween = {from: camera.position.clone(), to, t0: performance.now(), tf: controls.target.clone(), tt: TARGETS[name] || CENTER};
 }
 camera.position.set(...VIEWS.overview);
 
@@ -653,7 +654,7 @@ function loop(now){
   if (tween){
     const k = Math.min(1, (now - tween.t0)/650), e = k<.5 ? 2*k*k : 1 - Math.pow(-2*k+2, 2)/2;
     camera.position.lerpVectors(tween.from, tween.to, e);
-    controls.target.lerpVectors(tween.tf, CENTER, e);
+    controls.target.lerpVectors(tween.tf, tween.tt, e);
     if (k >= 1) tween = null;
   }
   controls.update(); renderer.render(scene, camera);
@@ -746,7 +747,6 @@ function renderCheck(){
   const d = derive();
   const boardCover = 3.6 * 0.15;
   const gBoards = Math.ceil(d.gableArea / boardCover * 1.1);
-  const gBoardsBand = Math.ceil((d.gableArea + d.bandArea) / boardCover * 1.1);
   const soffitLen = d.eaveTotal - d.eaves.swe + d.rakeTotal;
   const eaveRows = Math.ceil((d.eo/d.cos)/0.095), gableRows = Math.ceil(d.go/0.095);
   const soffitBoardM = ((d.eaveTotal - d.eaves.swe) * eaveRows + d.rakeTotal * gableRows) * 1.1;
@@ -758,7 +758,7 @@ function renderCheck(){
     ['Gable cladding area', `${f1(d.gableArea)} m²`, '≈ 34 m² (63 boards)', verdict(d.gableArea, 34),
       `Three gable triangles at ${S.pitch}°. HardiePlank covers about 0.54 m² per board (15 cm visible × 3.6 m).`],
     ['HardiePlank boards, incl. 10% waste', `${gBoards}`, '70', verdict(gBoards, 70),
-      `If the dark band under the gables is also clad: ${gBoardsBand} boards. The roof pitch matters most here.`],
+      'The roof pitch matters most here.'],
     ['Overhang, running metres', `${f1(soffitLen)} m`, '≈ 75 m', verdict(soffitLen, 75),
       `Eaves ${f1(d.eaveTotal - d.eaves.swe)} m plus sloping edges at the gables ${f1(d.rakeTotal)} m (terrace counted separately).`],
     ['Overhang boards, metres of board', `${Math.round(soffitBoardM)} m`, '561 m (110 × 5.1)', verdict(soffitBoardM, 561),
@@ -774,7 +774,7 @@ function renderCheck(){
     ['Gutter brackets', `${brackets}`, '66', verdict(brackets, 66), 'One every 60 cm, plus one near each end.'],
     ['Inner corner pieces', '2', '0', verdict(0,0,'missing'), 'Two runs turn inner corners where the living-room wing meets the main house.'],
     ['Downpipe clips (rørholdere)', 'about 9', '0', verdict(0,0,'missing'), 'About 3 per downpipe.'],
-    ['Downpipes', '3, maybe 4', '3', verdict(0,0,'ask'), 'Three visible in the photos. Two black pipes on the east gable could be a fourth.']
+    ['Downpipes', '3', '3', verdict(3, 3), 'Three on the house. The two black pipes on the east gable belong to the heat pump.']
   ];
   document.querySelector('#check tbody').innerHTML = rows.map(r =>
     `<tr><td><b>${r[0]}</b><div class="muted">${r[4]}</div></td><td class="num">${r[1]}</td><td class="num">${r[2]}</td><td>${r[3]}</td></tr>`).join('');
@@ -811,7 +811,7 @@ if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEven
 
 const H = new URLSearchParams(location.hash.slice(1));
 if (H.get('mode') === 'today' || H.get('mode') === 'after'){ S.mode = H.get('mode'); document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x.dataset.mode === S.mode)); }
-if (VIEWS[H.get('view')]) camera.position.set(...VIEWS[H.get('view')]);
+if (VIEWS[H.get('view')]){ camera.position.set(...VIEWS[H.get('view')]); controls.target.copy(TARGETS[H.get('view')] || CENTER); }
 if (COMP[H.get('sel')]) S.sel = H.get('sel');
 setColour(COLOURS[H.get('colour')] ? H.get('colour') : 'sort');
 sky(); build(); renderList(); renderCheck(); resize(); requestAnimationFrame(loop);
